@@ -26,4 +26,9 @@ public class UserServiceImpl implements UserService{
         else
             return passwordByUserLogin.get().equals(password);
     }
+
+    @Override
+    public long getIdByLogin(String login) {
+        return userRepository.getIdByLogin(login);
+    }
 }

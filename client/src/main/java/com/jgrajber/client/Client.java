@@ -1,7 +1,12 @@
 package com.jgrajber.client;
 
+import com.jgrajber.model.Payload;
+import com.jgrajber.model.Vehicle;
+
 import java.io.*;
 import java.net.Socket;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Scanner;
 
 public class Client {
@@ -45,7 +50,19 @@ public class Client {
             System.out.print("Pasword: ");
             client.sendMessage(input.nextLine());
 
-            System.out.println(client.receiveMessage());
+            String receivedMessage = client.receiveMessage();
+
+            if (receivedMessage.equals("logged-in")){
+                try (var readObj = new ObjectInputStream(client.client.getInputStream())) {
+                    Payload offers= (Payload) readObj.readObject();
+                    offers.print();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println(receivedMessage);
+            }
+
 
             client.disconnect();
         } catch (IOException e) {
