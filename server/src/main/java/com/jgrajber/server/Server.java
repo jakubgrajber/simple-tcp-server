@@ -13,14 +13,21 @@ import java.util.Properties;
  *
  */
 
-public class Server {
+public class Server implements Runnable{
 
-    public void start(int port) {
+    private int port;
+    private boolean runFlag;
 
+    public Server(int port) {
+        this.port = port;
+    }
+
+    @Override
+    public void run() {
         try (var server = new ServerSocket(port)){
             System.out.println("Server is listening on port " + port);
 
-            while (true) {
+            while (runFlag) {
                 Socket client = server.accept();
                 System.out.println("New client connected " + client.getInetAddress());
 
@@ -32,16 +39,21 @@ public class Server {
         }
     }
 
+    public void start() {
+        runFlag = true;
+        new Thread(this).start();
+    }
+
     public static void main(String[] args) throws IOException {
-
-        var server = new Server();
-
         var properties = new Properties();
+        int port;
 
         try(var in = new FileInputStream("src/main/resources/config.properties")) {
             properties.load(in);
-            server.start(Integer.parseInt(properties.getProperty("server.port")));
-
+            port = Integer.parseInt(properties.getProperty("server.port"));
         }
+
+        new Server(port).start();
+
     }
 }
