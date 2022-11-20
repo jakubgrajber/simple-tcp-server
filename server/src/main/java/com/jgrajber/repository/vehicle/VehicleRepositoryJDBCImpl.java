@@ -52,6 +52,4 @@ public class VehicleRepositoryJDBCImpl implements VehicleRepository {
 
         return vehicles;
     }
-
-
 }

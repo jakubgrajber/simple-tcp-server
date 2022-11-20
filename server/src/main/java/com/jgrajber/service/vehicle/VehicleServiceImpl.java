@@ -24,7 +24,4 @@ public class VehicleServiceImpl implements VehicleService {
         return vehicleRepository.getVehiclesByUserId(userId);
     }
 
-    public static VehicleService createVehicleService() {
-        return new VehicleServiceImpl(new VehicleRepositoryJDBCImpl(PGDataSourceFactory.createPSQLDataSource()));
-    }
 }
