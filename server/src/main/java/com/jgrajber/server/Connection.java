@@ -11,14 +11,26 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import java.io.*;
 import java.net.Socket;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+/***
+ * Connection represents every single client connected to the server.
+ * It is used to process client request by server
+ */
 
 public class Connection extends Thread {
 
     private Socket client;
+
+    private PrintWriter out;
+    private BufferedReader in;
+
+    private UserService userService;
+    private VehicleService vehicleService;
+    private InsuranceOfferService offerService;
 
     public Connection(Socket client) {
         this.client = client;
@@ -27,48 +39,58 @@ public class Connection extends Thread {
     @Override
     public void run() {
 
-        var context = new AnnotationConfigApplicationContext(AppConfig.class);
-
-        var userService = context.getBean(UserService.class);
-        var vehicleService = context.getBean(VehicleService.class);
-        var offerService = context.getBean(InsuranceOfferService.class);
-        Payload payload = null;
-
-
-        try (var out = new PrintWriter(client.getOutputStream(), true);
-             var in = new BufferedReader(new InputStreamReader(client.getInputStream()))) {
-
+        try {
+            onConnect();
             String login = in.readLine();
             String password = in.readLine();
 
             if (userService.login(login, password)) {
-                out.println("logged-in");
-                long userId = userService.getIdByLogin(login);
-                List<Vehicle> vehiclesByUserId = vehicleService.getVehiclesByUserId(userId);
 
-                Map<Vehicle, List<InsuranceOffer>> map = new HashMap<>();
-                vehiclesByUserId.forEach(vehicle ->
-                    map.put(vehicle, offerService.getOffersByVehicleId(vehicle.id()))
-                );
-                payload = new Payload(map);
+                out.println("logged-in");
+
+                Payload payload = generateResponse(login);
 
                 try (var objOut = new ObjectOutputStream(client.getOutputStream())) {
-
                     objOut.writeObject(payload);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
 
             } else {
                 out.println("Wrong credentials");
             }
-            client.close();
+            onDisconnect();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    private Payload generateResponse(String login) {
+        return new Payload(getVehiclesInsuranceOffers(login));
+    }
 
+    private Map<Vehicle, List<InsuranceOffer>> getVehiclesInsuranceOffers(String login) {
+        long id = userService.getIdByLogin(login);
 
+        return vehicleService.getVehiclesByUserId(id).stream()
+                .collect(Collectors.toMap(
+                        Function.identity(),
+                        vehicle -> offerService.getOffersByVehicleId(vehicle.id())));
+    }
+
+    private void onConnect() throws IOException {
+
+        out = new PrintWriter(client.getOutputStream(), true);
+        in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+
+        var context = new AnnotationConfigApplicationContext(AppConfig.class);
+
+        userService = context.getBean(UserService.class);
+        vehicleService = context.getBean(VehicleService.class);
+        offerService = context.getBean(InsuranceOfferService.class);
+    }
+
+    private void onDisconnect() throws IOException {
+        in.close();
+        out.close();
+        client.close();
     }
 }

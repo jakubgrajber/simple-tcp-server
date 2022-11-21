@@ -12,6 +12,40 @@ public class Client {
     private PrintWriter out;
     private BufferedReader in;
 
+    public static void main(String[] args) {
+
+        var client = new Client();
+
+        try {
+            client.connect("localhost", 1234);
+            Scanner input = new Scanner(System.in);
+
+            System.out.print("Login: ");
+            client.sendMessage(input.nextLine());
+
+            System.out.print("Password: ");
+            client.sendMessage(input.nextLine());
+
+            String receivedMessage = client.receiveMessage();
+
+            if (receivedMessage.equals("logged-in")){
+                try (var inputObject = new ObjectInputStream(client.client.getInputStream())) {
+                    Payload offers= (Payload) inputObject.readObject();
+                    offers.print();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println(receivedMessage);
+            }
+
+            client.disconnect();
+        } catch (IOException e) {
+            System.err.println("Couldn't connect.");
+            e.printStackTrace();
+        }
+    }
+
     public void connect(String ip, int port) throws IOException {
         client = new Socket(ip, port);
         out = new PrintWriter(client.getOutputStream(), true);
@@ -31,40 +65,5 @@ public class Client {
         in.close();
         out.close();
         client.close();
-    }
-
-    public static void main(String[] args) {
-
-        var client = new Client();
-
-        try {
-            client.connect("localhost", 1234);
-            Scanner input = new Scanner(System.in);
-
-            System.out.print("Login: ");
-            client.sendMessage(input.nextLine());
-
-            System.out.print("Password: ");
-            client.sendMessage(input.nextLine());
-
-            String receivedMessage = client.receiveMessage();
-
-            if (receivedMessage.equals("logged-in")){
-                try (var readObj = new ObjectInputStream(client.client.getInputStream())) {
-                    Payload offers= (Payload) readObj.readObject();
-                    offers.print();
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                System.out.println(receivedMessage);
-            }
-
-
-            client.disconnect();
-        } catch (IOException e) {
-            System.err.println("Couldn't connect.");
-            e.printStackTrace();
-        }
     }
 }
