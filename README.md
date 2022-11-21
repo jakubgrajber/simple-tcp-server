@@ -7,11 +7,11 @@
 
 <code>mvn initialize</code>
 
-1. Package server project into a jar. In server directory: 
+2. Package server project into a jar. In server directory: 
    
 <code>mvn package -DskipTests</code> 
 
-2. Package client project into a jar. In client directory:
+3. Package client project into a jar. In client directory:
 
 <code>mvn package</code>
 
