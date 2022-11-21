@@ -1,12 +1,9 @@
 package com.jgrajber.client;
 
 import com.jgrajber.model.Payload;
-import com.jgrajber.model.Vehicle;
 
 import java.io.*;
 import java.net.Socket;
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.Scanner;
 
 public class Client {
@@ -47,7 +44,7 @@ public class Client {
             System.out.print("Login: ");
             client.sendMessage(input.nextLine());
 
-            System.out.print("Pasword: ");
+            System.out.print("Password: ");
             client.sendMessage(input.nextLine());
 
             String receivedMessage = client.receiveMessage();
