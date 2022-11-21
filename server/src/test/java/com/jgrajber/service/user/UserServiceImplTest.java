@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
@@ -64,5 +65,19 @@ class UserServiceImplTest {
 
         // then
         assertFalse(loginTest);
+    }
+
+    @Test
+    void givenLogin_whenGetIdByLogin_thenReturnId() {
+
+        // given
+        String login = "user1";
+
+        // when
+        userService.getIdByLogin(login);
+
+        // then
+        verify(userRepository, times(1)).getIdByLogin(login);
+
     }
 }

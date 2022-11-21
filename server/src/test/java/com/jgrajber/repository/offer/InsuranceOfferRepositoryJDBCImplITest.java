@@ -8,6 +8,11 @@ import java.util.List;
 import static com.jgrajber.db.PGDataSourceFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+/***
+ * Start docker container with PostrgreSQL and init script
+ * before running following tests.
+ */
+
 class InsuranceOfferRepositoryJDBCImplITest {
 
     private InsuranceOfferRepositoryJDBCImpl offerRepository = new InsuranceOfferRepositoryJDBCImpl(createPSQLDataSource());

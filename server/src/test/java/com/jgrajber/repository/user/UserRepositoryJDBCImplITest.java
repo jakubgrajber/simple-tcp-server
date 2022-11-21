@@ -7,6 +7,11 @@ import java.util.Optional;
 import static com.jgrajber.db.PGDataSourceFactory.createPSQLDataSource;
 import static org.junit.jupiter.api.Assertions.*;
 
+/***
+ * Start docker container with PostrgreSQL and init script
+ * before running following tests.
+ */
+
 class UserRepositoryJDBCImplITest {
 
     private UserRepositoryJDBCImpl userRepository = new UserRepositoryJDBCImpl(createPSQLDataSource());
@@ -38,5 +43,19 @@ class UserRepositoryJDBCImplITest {
 
         // then
         assertTrue(passwordByUserLogin.isEmpty());
+    }
+
+    @Test
+    void givenLogin_whenGetIfByLogin_thenReturnLogin() {
+
+        // given
+        String login = "user1";
+        long id = 1L;
+
+        // when
+        long idFromDb = userRepository.getIdByLogin(login);
+
+        // then
+        assertEquals(id, idFromDb);
     }
 }
