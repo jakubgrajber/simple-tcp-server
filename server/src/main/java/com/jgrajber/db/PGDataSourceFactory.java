@@ -16,7 +16,7 @@ public class PGDataSourceFactory {
         try (var input = new FileInputStream("src/main/resources/config.properties")) {
 
             Properties properties = new Properties();
-            dataSource =  new PGSimpleDataSource();
+            dataSource = new PGSimpleDataSource();
 
             properties.load(input);
 

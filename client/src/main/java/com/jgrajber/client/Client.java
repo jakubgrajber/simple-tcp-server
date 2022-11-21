@@ -50,8 +50,8 @@ public class Client {
             String receivedMessage = client.receiveMessage();
 
             if (receivedMessage.equals("logged-in")){
-                try (var readObj = new ObjectInputStream(client.client.getInputStream())) {
-                    Payload offers= (Payload) readObj.readObject();
+                try (var inputObject = new ObjectInputStream(client.client.getInputStream())) {
+                    Payload offers= (Payload) inputObject.readObject();
                     offers.print();
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
@@ -59,7 +59,6 @@ public class Client {
             } else {
                 System.out.println(receivedMessage);
             }
-
 
             client.disconnect();
         } catch (IOException e) {
