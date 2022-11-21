@@ -21,10 +21,14 @@ public class Client {
             Scanner input = new Scanner(System.in);
 
             System.out.print("Login: ");
-            client.sendMessage(input.nextLine());
+            if (input.hasNextLine()) {
+                client.sendMessage(input.nextLine());
+            }
 
             System.out.print("Password: ");
-            client.sendMessage(input.nextLine());
+            if (input.hasNextLine()) {
+                client.sendMessage(input.nextLine());
+            }
 
             String receivedMessage = client.receiveMessage();
 

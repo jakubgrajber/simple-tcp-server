@@ -57,7 +57,7 @@
                             <archive>
                                 <manifest>
                                     <mainClass>
-                                        com.jgrajber.server.Server
+                                        com.jgrajber.client.Client
                                     </mainClass>
                                 </manifest>
                             </archive>
