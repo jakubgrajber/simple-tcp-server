@@ -29,8 +29,6 @@ public class Server implements Runnable{
 
             while (runFlag) {
                 Socket client = server.accept();
-                System.out.println("New client connected " + client.getInetAddress());
-
                 new Connection(client).start();
             }
         } catch (IOException exception) {

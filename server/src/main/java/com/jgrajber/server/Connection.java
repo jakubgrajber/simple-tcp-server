@@ -47,6 +47,7 @@ public class Connection extends Thread {
             if (userService.login(login, password)) {
 
                 out.println("logged-in");
+                System.out.println("Client logged in successfully");
 
                 Payload payload = generateResponse(login);
 
@@ -55,6 +56,7 @@ public class Connection extends Thread {
                 }
 
             } else {
+                System.out.println("Client provided wrong credentials");
                 out.println("Wrong credentials");
             }
             onDisconnect();
@@ -78,6 +80,8 @@ public class Connection extends Thread {
 
     private void onConnect() throws IOException {
 
+        System.out.println("Client connected: " + client.getInetAddress());
+
         out = new PrintWriter(client.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
@@ -89,6 +93,7 @@ public class Connection extends Thread {
     }
 
     private void onDisconnect() throws IOException {
+        System.out.println("Client disconnected: " + client.getInetAddress());
         in.close();
         out.close();
         client.close();
